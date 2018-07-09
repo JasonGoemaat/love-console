@@ -223,15 +223,12 @@ end
 
 function console.textinput(t)
 	if t ~= console._KEY_TOGGLE and console.visible then
-		console.cursor = console.cursor + 1
 		local x = string.sub(console.input, 0, console.cursor) .. t
 		if console.cursor < #console.input then
 			x = x .. string.sub(console.input, console.cursor+1)
 		end
 		console.input = x
-		
-
-		--console.input = console.input .. t
+		console.cursor = console.cursor + 1
 		return true
 	end
 end
@@ -257,10 +254,10 @@ function console.keypressed(key)
 		elseif key == console._KEY_CLEAR then
 			console.input = ""
 		elseif key == console._KEY_DELETE then
-			if console.cursor >= 0 then
-				local t = string.sub(console.input, 0, console.cursor) 
+			if console.cursor > 0 then
+				local t = string.sub(console.input, 0, console.cursor-1) 
 				if console.cursor < #console.input then
-					t = t .. string.sub(console.input, console.cursor+2)
+					t = t .. string.sub(console.input, console.cursor+1)
 				end
 				console.input = t
 				console.cursor = console.cursor - 1
@@ -390,14 +387,14 @@ function console.draw()
 
 	if console.cursorlife < 0.5 then
 		local str = tostring(console.input)
-		local offset = 1
+		local offset = 0
 		while console.font:getWidth(str) > console.w - (console.fontSize / 4) do
 			str = str:sub(2)
 			offset = offset + 1
 		end
 
 		local cursorx = ((console.x + (console.margin*2) + (console.fontSize/4)) + console.font:getWidth(str:sub(1, console.cursor + offset)))
-		love.graphics.setColor(255, 255, 255)
+		love.graphics.setColor(1,1,1)
 		love.graphics.line(cursorx, console.y + console.h + console.lineHeight -5, cursorx, console.y + console.h +5)
 	end
 
